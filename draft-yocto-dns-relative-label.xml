@@ -1,0 +1,116 @@
+<rfc category="info" docName="draft-yocto-dns-relative-label-00" ipr="trust200902" submissionType="IETF" version="3">
+	<front>
+		<title abbrev="DNS Relative Labels">Relative Labels in the Domain Name System</title>
+		<seriesInfo name="Internet-Draft" value="draft-yocto-dns-relative-label-00"/>
+		<author fullname="B.J. van Hartingsveldt" initials="B.J." surname="van Hartingsveldt">
+			<organization showOnFrontPage="true">Yocto</organization>
+			<address>
+				<email>ben.vanhartingsveldt@yocto.com</email>
+			</address>
+		</author>
+		<abstract>
+			<t>This document defines a new DNS Label Type using the Extension Mechanisms for DNS to indicate when a relative domain name is used.</t>
+		</abstract>
+	</front>
+	<middle>
+		<section>
+			<name>Introduction</name>
+			<t>This document defines a "Relative Label" which may appear within domain names. This new label type enables resource records to be stored with their relative form (e.g. "www" instead of "www.example.com.").</t>
+		</section>
+		<section>
+			<name>Terminology</name>
+			<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+		</section>
+		<section>
+			<name>Motivation</name>
+			<t>Relative labels are intended to efficiently solve the problem of using FQDNs when a relative label is wanted. For example, when someone wants to add the MX record "0 mx" instead of "0 mx.example.com." using DNS UPDATE <xref target="RFC2136"/>. It is also useful for DNS providers that store all the records in binary format. Saving data in binary requires less space and the data is already in wire format, but at the moment there is no way to save relative domains.</t>
+		</section>
+		<section>
+			<name>Label Format</name>
+			<t>Relative labels can only appear in the end of a relative FQDN, like the zero octet only appears in the end of an absolute FQDN. Message compression is possible when also using the relative label, but because the relative label already gives the possibility to leave out the zone name, message compression will likely have less effect.</t>
+			<section>
+				<name>Wire format</name>
+				<figure>
+					<artwork> 0 1 2 3 4 5 6 7 
++-+-+-+-+-+-+-+-+
+|0 1|    ELT    |
++-+-+-+-+-+-+-+-+</artwork>
+				</figure>
+				<dl>
+					<dt>ELT</dt>
+					<dd>000000 binary, the six-bit extended label type <xref target="RFC2671"/> assigned to the Relative Label.</dd>
+				</dl>
+			</section>
+			<section>
+				<name>Representation format</name>
+				<t>As described in <xref target="RFC1035"/>, relative domain names are domain names that don't end with a dot.</t>
+			</section>
+			<section>
+				<name>Canonical Representation and Sort Order</name>
+				<t>Before records are sorted for DNSSEC <xref target="RFC2065"/> purposes, the resource record MUST be converted to canonical form. This simply happens by replacing the relative label by the whole zone name. Also, the relative label should not appear when doing queries, except for AXFR and IXFR.</t>
+			</section>
+		</section>
+		<section>
+			<name>IANA Considerations</name>
+			<t>This document defines one Extended Label Type, termed the Relative Label, and requests registration of the code point 000000 binary in the space defined by <xref target="RFC2671"/>.</t>
+		</section>
+		<section>
+			<name>Security Considerations</name>
+			<t>All security considerations which apply to traditional ASCII DNS labels apply equally to binary labels. The canonicalization and sorting rules of section 3.3 allow these to be addressed by DNS Security <xref target="RFC2065"/>.</t>
+		</section>
+	</middle>
+	<back>
+		<references>
+			<name>Normative References</name>
+			<reference anchor="RFC1035">
+				<front>
+					<title>Domain names - implementation and specification</title>
+					<author fullname="P. Mockapetris" initials="P." surname="Mockapetris"/>
+					<date month="November" year="1987"/>
+				</front>
+				<seriesInfo name="RFC" value="1035"/>
+				<seriesInfo name="DOI" value="10.17487/RFC1035"/>
+			</reference>
+			<reference anchor="RFC2065">
+				<front>
+					<title>Domain Name System Security Extensions</title>
+					<author fullname="D. Eastlake" initials="D." surname="Eastlake"/>
+					<date month="January" year="1997"/>
+				</front>
+				<seriesInfo name="RFC" value="2065"/>
+				<seriesInfo name="DOI" value="10.17487/RFC2065"/>
+			</reference>
+			<reference anchor="RFC2119">
+				<front>
+					<title>Key words for use in RFCs to Indicate Requirement Levels</title>
+					<author fullname="S. Bradner" initials="S." surname="Bradner"/>
+					<date month="March" year="1997"/>
+					<abstract>
+						<t>In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+					</abstract>
+				</front>
+				<seriesInfo name="BCP" value="14"/>
+				<seriesInfo name="RFC" value="2119"/>
+				<seriesInfo name="DOI" value="10.17487/RFC2119"/>
+			</reference>
+			<reference anchor="RFC2136">
+				<front>
+					<title>Dynamic Updates in the Domain Name System (DNS UPDATE)</title>
+					<author fullname="P. Vixie" initials="P." surname="Vixie"/>
+					<date month="April" year="1997"/>
+				</front>
+				<seriesInfo name="RFC" value="2136"/>
+				<seriesInfo name="DOI" value="10.17487/RFC2136"/>
+			</reference>
+			<reference anchor="RFC2671">
+				<front>
+					<title>Extension mechanisms for DNS (EDNS0)</title>
+					<author fullname="P. Vixie" initials="P." surname="Vixie"/>
+					<date month="August" year="1999"/>
+				</front>
+				<seriesInfo name="RFC" value="2119"/>
+				<seriesInfo name="DOI" value="10.17487/RFC2671"/>
+			</reference>
+		</references>
+	</back>
+</rfc>
