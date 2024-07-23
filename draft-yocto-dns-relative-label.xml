@@ -1,7 +1,7 @@
-<rfc category="info" docName="draft-yocto-dns-relative-label-00" ipr="trust200902" submissionType="IETF" version="3">
+<rfc category="info" docName="draft-yocto-dns-relative-label-01" ipr="trust200902" submissionType="IETF" version="3">
 	<front>
 		<title abbrev="DNS Relative Labels">Relative Labels in the Domain Name System</title>
-		<seriesInfo name="Internet-Draft" value="draft-yocto-dns-relative-label-00"/>
+		<seriesInfo name="Internet-Draft" value="draft-yocto-dns-relative-label-01"/>
 		<author fullname="B.J. van Hartingsveldt" initials="B.J." surname="van Hartingsveldt">
 			<organization showOnFrontPage="true">Yocto</organization>
 			<address>
@@ -15,7 +15,7 @@
 	<middle>
 		<section>
 			<name>Introduction</name>
-			<t>This document defines a "Relative Label" which may appear within domain names. This new label type enables resource records to be stored with their relative form (e.g. "www" instead of "www.example.com.").</t>
+			<t>This document defines a "Relative Label" which may appear within domain names. This new label type enables resource records to be used with their relative form (e.g. "www" instead of "www.example.com.").</t>
 		</section>
 		<section>
 			<name>Terminology</name>
@@ -23,11 +23,11 @@
 		</section>
 		<section>
 			<name>Motivation</name>
-			<t>Relative labels are intended to efficiently solve the problem of using FQDNs when a relative label is wanted. For example, when someone wants to add the MX record "0 mx" instead of "0 mx.example.com." using DNS UPDATE <xref target="RFC2136"/>. It is also useful for DNS providers that store all the records in binary format. Saving data in binary requires less space and the data is already in wire format, but at the moment there is no way to save relative domains.</t>
+			<t>Relative labels are intended to efficiently solve the problem of using FQDNs when a relative label is wanted. For example, when someone wants to add the MX record "0 mx" instead of "0 mx.example.com." to a zone using DNS UPDATE <xref target="RFC2136"/>. It is also useful for DNS providers that store all the records in binary format. Saving data in binary requires less space and the data is already in wire format, but at the moment there is no way to save relative domains in their binary form.</t>
 		</section>
 		<section>
 			<name>Label Format</name>
-			<t>Relative labels can only appear in the end of a relative FQDN, like the zero octet only appears in the end of an absolute FQDN. Message compression is possible when also using the relative label, but because the relative label already gives the possibility to leave out the zone name, message compression will likely have less effect.</t>
+			<t>Relative labels can only appear in the end of a relative FQDN, like the zero octet only appears in the end of an absolute FQDN. [TODO: MOVE -->] Message compression is possible when also using the relative label, but because the relative label already gives the possibility to leave out the zone name, message compression will likely have less effect.</t>
 			<section>
 				<name>Wire format</name>
 				<figure>
@@ -46,9 +46,21 @@
 				<t>As described in <xref target="RFC1035"/>, relative domain names are domain names that don't end with a dot.</t>
 			</section>
 			<section>
-				<name>Canonical Representation and Sort Order</name>
-				<t>Before records are sorted for DNSSEC <xref target="RFC2065"/> purposes, the resource record MUST be converted to canonical form. This simply happens by replacing the relative label by the whole zone name. Also, the relative label should not appear when doing queries, except for AXFR and IXFR.</t>
+				<name>Examples</name>
+				<t>When an absolute domain name like "www.example.com." is converted to binary, its hexadecimal representation would be: [03] 77 77 77 [07] 65 78 61 6D 70 6C 65 [03] 63 6F 6D [00]. The square brackets indicate the label lengths.</t>
+				<t>When converting a relative domain name like "www.subdomain" to binary, its hexadecimal representation becomes: [03] 77 77 77 [09] 73 75 62 64 6F 6D 61 69 6E [40]. The square brackets also indicate the labels lengths here, except for [40], which is the extended label type defined by this specification.</t>
 			</section>
+		</section>
+		<section>
+			<name>Canonical Representation</name>
+			<t>Relative domain names do not contain the zone they belong to. For the resource records, in order to be queried with the QUERY opcode or sorted for DNSSEC <xref target="RFC4033"/>, at some moment the records should be converted to their canonical form. To be able to do that, the absolute form of the domain name should be known.</t>
+			<t>To retrieve the absolute domain name from a relative domain name, the containing zone MUST be known from context. In DNS UPDATE <xref target="RFC2136"/>, the zone is sent in the zone section, which a renaming of the question section. When using binary zone files, the zone will likely be encoded in the file header or the file name.</t>
+			<t>On binary level, to get the absolute form of the domain name, the last byte of the relative domain name, 0x40, MUST be removed. Then, the binary form of the zone name MUST be appended. For example, [03] 77 77 77 [40] (www) and [07] 65 78 61 6D 70 6C 65 [03] 63 6F 6D [00] (example.com.), will become [03] 77 77 77 [07] 65 78 61 6D 70 6C 65 [03] 63 6F 6D [00] (www.example.com.).
+			<t>Relative labels should be avoided in QUERY results, because clients MAY NOT support it. Also, for supporting clients, it is impossible know which zone the records belong to. For AXFR and IXFR, it is possible to know the zone, so using the relative label for those queries MAY be considered.</t>
+		</section>
+		<section>
+			<name>Implementation</name>
+			<t>Implementation is OPTIONAL, so clients SHOULD NOT expect every server to support this feature. An indicator MAY BE added in the future for servers to indicate that they support relative labels and for which record types.</t>
 		</section>
 		<section>
 			<name>IANA Considerations</name>
@@ -56,7 +68,7 @@
 		</section>
 		<section>
 			<name>Security Considerations</name>
-			<t>All security considerations which apply to traditional ASCII DNS labels apply equally to binary labels. The canonicalization and sorting rules of section 3.3 allow these to be addressed by DNS Security <xref target="RFC2065"/>.</t>
+			<t>All security considerations which apply to traditional ASCII DNS labels apply equally to binary labels. The canonicalization and sorting rules of section 3.3 allow these to be addressed by DNS Security <xref target="RFC4033"/>.</t>
 		</section>
 	</middle>
 	<back>
@@ -70,15 +82,6 @@
 				</front>
 				<seriesInfo name="RFC" value="1035"/>
 				<seriesInfo name="DOI" value="10.17487/RFC1035"/>
-			</reference>
-			<reference anchor="RFC2065">
-				<front>
-					<title>Domain Name System Security Extensions</title>
-					<author fullname="D. Eastlake" initials="D." surname="Eastlake"/>
-					<date month="January" year="1997"/>
-				</front>
-				<seriesInfo name="RFC" value="2065"/>
-				<seriesInfo name="DOI" value="10.17487/RFC2065"/>
 			</reference>
 			<reference anchor="RFC2119">
 				<front>
@@ -108,8 +111,21 @@
 					<author fullname="P. Vixie" initials="P." surname="Vixie"/>
 					<date month="August" year="1999"/>
 				</front>
-				<seriesInfo name="RFC" value="2119"/>
+				<seriesInfo name="RFC" value="2671"/>
 				<seriesInfo name="DOI" value="10.17487/RFC2671"/>
+			</reference>
+			<reference anchor="RFC4033">
+				<front>
+					<title>DNS Security Introduction and Requirements</title>
+					<author fullname="R. Arends" initials="R." surname="Arends"/>
+					<author fullname="R. Austein" initials="R." surname="Austein"/>
+					<author fullname="M. Larson" initials="M." surname="Larson"/>
+					<author fullname="D. Massey" initials="D." surname="Massey"/>
+					<author fullname="S. Rose" initials="S." surname="Rose"/>
+					<date month="March" year="2005"/>
+				</front>
+				<seriesInfo name="RFC" value="4033"/>
+				<seriesInfo name="DOI" value="10.17487/RFC4033"/>
 			</reference>
 		</references>
 	</back>
