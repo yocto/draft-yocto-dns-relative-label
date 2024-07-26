@@ -132,24 +132,7 @@
 		</references>
 		<section>
 			<name>Acknowledgements</name>
-			<t>The author gratefully acknowledges the contributions and feedback of
-				<contact fullname="Alexander Robohm"/>
-				,
-				<contact fullname="Edward Lewis"/>
-				,
-				<contact fullname="Joe Abley"/>
-				,
-				<contact fullname="Mukund Sivaraman"/>
-				,
-				<contact fullname="Ond&#x159;ej Sur&#xFD;"/>
-				,
-				<contact fullname="Tim Wicinski"/>
-				,
-				<contact fullname="Peter Thomassen"/>
-				, and
-				<contact fullname="Marco Davids"/>
-				.
-			</t>
+			<t>The author gratefully acknowledges the contributions and feedback of <contact fullname="Alexander Robohm"/>, <contact fullname="Edward Lewis"/>, <contact fullname="Joe Abley"/>, <contact fullname="Mukund Sivaraman"/>, <contact fullname="Ond&#x159;ej Sur&#xFD;"/>, <contact fullname="Tim Wicinski"/>, <contact fullname="Peter Thomassen"/>, and <contact fullname="Marco Davids"/>.</t>
 			<t>As well as all of those in the IETF community and on GitHub to who contributed to the discussions that resulted in this document.</t>
 		</section>
 	</back>
