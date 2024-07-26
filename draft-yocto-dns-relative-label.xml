@@ -1,7 +1,7 @@
-<rfc category="info" docName="draft-yocto-dns-relative-label-02" ipr="trust200902" submissionType="IETF" version="3">
+<rfc category="info" docName="draft-yocto-dns-relative-label-03" ipr="trust200902" submissionType="IETF" version="3">
 	<front>
 		<title abbrev="DNS Relative Labels">Relative Labels in the Domain Name System</title>
-		<seriesInfo name="Internet-Draft" value="draft-yocto-dns-relative-label-02"/>
+		<seriesInfo name="Internet-Draft" value="draft-yocto-dns-relative-label-03"/>
 		<author fullname="B.J. van Hartingsveldt" initials="B.J." surname="van Hartingsveldt">
 			<organization showOnFrontPage="true">Yocto</organization>
 			<address>
@@ -130,7 +130,7 @@
 				<seriesInfo name="DOI" value="10.17487/6891"/>
 			</reference>
 		</references>
-		<section>
+		<section numbered="false">
 			<name>Acknowledgements</name>
 			<t>The author gratefully acknowledges the contributions and feedback of <contact fullname="Alexander Robohm"/>, <contact fullname="Edward Lewis"/>, <contact fullname="Joe Abley"/>, <contact fullname="Mukund Sivaraman"/>, <contact fullname="Ond&#x159;ej Sur&#xFD;"/>, <contact fullname="Tim Wicinski"/>, <contact fullname="Peter Thomassen"/>, and <contact fullname="Marco Davids"/>.</t>
 			<t>As well as all of those in the IETF community and on GitHub to who contributed to the discussions that resulted in this document.</t>
